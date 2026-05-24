@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Nitish QA Toolkit — Clean Refined</title>
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --bg:#0f1115;
+      --bg2:#161a22;
+      --panel:#171b23;
+      --panel-2:#1d2330;
+      --panel-soft:#202736;
+      --border:rgba(255,255,255,0.08);
+      --border-strong:rgba(255,255,255,0.14);
+      --text:#f4f7fb;
+      --muted:#b4bfd2;
+      --muted-2:#8c97ab;
+      --accent:#5b8cff;
+      --accent-2:#3a72f8;
+      --accent-soft:rgba(91,140,255,0.18);
+      --success:#2ed47a;
+      --warn:#ffb84d;
+      --danger:#ff6d6d;
+      --radius:18px;
+      --radius-sm:12px;
+      --shadow:0 18px 40px rgba(0,0,0,0.30);
+      --shadow-soft:0 8px 24px rgba(0,0,0,0.22);
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:'Inter',sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(91,140,255,0.12), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(91,140,255,0.08), transparent 32%),
+        linear-gradient(180deg,#0d1015 0%, #11141b 100%);
+      color:var(--text);
+      min-height:100vh;
+      line-height:1.5;
+    }
+
+    .shell{max-width:1180px;margin:0 auto;padding:18px 20px 24px}
+
+    .topbar{
+      display:flex;align-items:center;justify-content:space-between;gap:16px;
+      padding:16px 20px;border:1px solid var(--border);border-radius:22px;
+      background:rgba(23,27,35,0.78);backdrop-filter:blur(14px);box-shadow:var(--shadow-soft);
+      margin-bottom:14px;
+    }
+    .brand{display:flex;align-items:center;gap:14px}
+    .brand-icon{
+      width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
+      background:linear-gradient(135deg,#6a95ff,#4b7cff);font-size:22px;font-weight:700;
+      box-shadow:0 12px 30px rgba(91,140,255,0.35);
+    }
+    .brand h1{font-size:19px;letter-spacing:-0.4px}
+    .brand p{font-size:13px;color:var(--muted)}
+    .top-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .meta-pill{
+      padding:8px 12px;border-radius:999px;background:rgba(255,255,255,0.04);
+      border:1px solid var(--border);font-size:12px;color:var(--muted)
+    }
+    .meta-pill strong{color:var(--text)}
+
+    .tabs{
+      display:grid;grid-template-columns:repeat(4,1fr);gap:10px;
+      margin-bottom:14px;
+    }
+    .tab{
+      border:none;cursor:pointer;font:600 14px 'Inter',sans-serif;color:var(--muted);
+      background:rgba(255,255,255,0.03);border:1px solid var(--border);
+      border-radius:14px;padding:12px 14px;transition:.22s ease;
+      min-height:46px;
+    }
+    .tab:hover{transform:translateY(-3px) scale(1.01);border-color:var(--border-strong);color:var(--text);background:rgba(255,255,255,0.055);box-shadow:0 16px 34px rgba(0,0,0,0.28),0 10px 24px rgba(91,140,255,0.12)}
+    .tab.active{
+      color:white;background:linear-gradient(180deg,var(--accent),var(--accent-2));
+      border-color:transparent;box-shadow:0 12px 28px rgba(58,114,248,0.35)
+    }
+
+.layout{display:grid;grid-template-columns:1.15fr 0.85fr;gap:14px;align-items:start}
+
+    .card{
+      background:linear-gradient(180deg,rgba(27,33,43,0.94),rgba(23,27,35,0.98));
+      border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-soft);
+      transition:transform .24s ease, box-shadow .24s ease, border-color .24s ease, background .24s ease;
+      transform-origin:center;
+    }
+    .card:hover{
+      transform:translateY(-5px) scale(1.008);
+      border-color:var(--border-strong);
+      box-shadow:0 22px 44px rgba(0,0,0,0.34), 0 14px 30px rgba(91,140,255,0.10);
+      background:linear-gradient(180deg,rgba(30,36,48,0.98),rgba(23,27,35,1));
+    }
+    .card-head{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      padding:16px 18px;border-bottom:1px solid rgba(255,255,255,0.06)
+    }
+    .card-title-wrap{display:flex;align-items:center;gap:12px}
+    .card-icon{
+      width:38px;height:38px;border-radius:12px;display:grid;place-items:center;
+      background:rgba(91,140,255,0.12);border:1px solid rgba(91,140,255,0.24);font-size:17px
+    }
+    .card-title{font-size:15px;font-weight:700}
+    .card-sub{font-size:12px;color:var(--muted)}
+    .card-body{padding:18px}
+
+    .split{
+      display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px
+    }
+    .mini{
+      background:rgba(255,255,255,0.03);border:1px solid var(--border);
+      border-radius:14px;padding:12px 14px
+    }
+    .mini .k{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted-2);margin-bottom:6px;font-weight:700}
+    .mini .v{font-size:14px;font-weight:600;color:var(--text);word-break:break-word}
+
+    .muted-copy{font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.45}
+
+    .upload-box{
+      background:rgba(255,255,255,0.025);border:1px dashed rgba(255,255,255,0.14);
+      border-radius:16px;padding:14px
+    }
+    .upload-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+    .tag{
+      display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;
+      font-size:11px;font-weight:700;color:#d9e5ff;background:rgba(91,140,255,0.16);border:1px solid rgba(91,140,255,0.24)
+    }
+    .label-xs{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted-2);font-weight:800}
+
+    .file-chip{
+      display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:14px;
+      background:rgba(255,255,255,0.045);border:1px solid var(--border);color:var(--muted);font-size:13px;
+      margin-bottom:10px;min-height:42px
+    }
+
+    .btn-row{display:flex;gap:8px;flex-wrap:wrap}
+    .btn{
+      border:none;cursor:pointer;border-radius:14px;padding:11px 14px;font:700 13px 'Inter',sans-serif;
+      transition:.2s ease;display:inline-flex;align-items:center;justify-content:center;gap:8px
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn.primary{background:linear-gradient(180deg,var(--accent),var(--accent-2));color:#fff;box-shadow:0 10px 24px rgba(58,114,248,0.28)}
+    .btn.secondary{background:#242c3a;color:var(--text);border:1px solid var(--border)}
+    .btn.secondary:hover{background:#293243}
+    .btn.warning{background:rgba(255,184,77,0.14);color:#ffd089;border:1px solid rgba(255,184,77,0.20)}
+    .btn.block{width:100%}
+
+    .status{
+      display:flex;gap:10px;align-items:flex-start;border-radius:14px;padding:11px 12px;margin-top:14px;
+      border:1px solid var(--border);background:rgba(91,140,255,0.10);color:#d9e5ff;font-size:13px
+    }
+
+    .field{margin-bottom:12px}
+    .field label{display:block;margin-bottom:6px;font-size:12px;font-weight:700;color:var(--muted)}
+    .select{
+      width:100%;padding:12px 14px;border-radius:14px;border:1px solid var(--border);
+      background:#222938;color:var(--text);font:600 14px 'Inter',sans-serif;outline:none
+    }
+    .select:focus{border-color:rgba(91,140,255,0.55);box-shadow:0 0 0 4px rgba(91,140,255,0.14)}
+
+    .preview{display:grid;gap:8px;margin-bottom:10px}
+    .preview-item{
+      border:1px solid var(--border);background:rgba(255,255,255,0.035);
+      border-radius:14px;padding:11px 12px
+    }
+    .preview-item .k{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted-2);margin-bottom:5px;font-weight:800}
+    .preview-item .v{font-size:13px;color:var(--text);word-break:break-all}
+
+    .actions{display:grid;gap:10px}
+    .launch{
+      border:none;cursor:pointer;padding:12px 14px;border-radius:15px;
+      font:800 14px 'Inter',sans-serif;color:#fff;
+      background:linear-gradient(180deg,var(--accent),var(--accent-2));
+      box-shadow:0 14px 28px rgba(58,114,248,0.32);transition:.2s ease
+    }
+    .launch:hover{transform:translateY(-1px)}
+
+    .help{
+      margin-top:14px;padding:12px 14px;border-radius:18px;border:1px solid var(--border);
+      background:rgba(255,255,255,0.03)
+    }
+    .help h3{font-size:13px;margin-bottom:8px}
+    .help-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+    .help-item{
+      border:1px solid var(--border);background:rgba(255,255,255,0.025);
+      border-radius:14px;padding:10px 11px
+    }
+    .help-item strong{display:block;font-size:12px;margin-bottom:4px}
+    .help-item span{font-size:12px;color:var(--muted);line-height:1.45}
+
+
+    .equal-card .card-body{display:flex;flex-direction:column;gap:0;min-height:340px}
+    .equal-card .card-body > *:last-child{margin-top:auto}
+
+    .glow-name{
+      color:#ffffff;
+      text-shadow:
+        0 0 8px rgba(91,140,255,0.85),
+        0 0 16px rgba(91,140,255,0.65),
+        0 0 28px rgba(91,140,255,0.45);
+      font-weight:800;
+      letter-spacing:0.02em;
+    }
+    .hidden{display:none !important}
+    .footer{margin-top:12px;text-align:center;color:var(--muted-2);font-size:12px}
+    .footer{margin-top:16px;text-align:center;color:var(--muted-2);font-size:12px;letter-spacing:.02em}
+    .nitish-signature{position:relative;display:inline-block;font-weight:800;letter-spacing:.04em;padding:0 2px;
+      background:linear-gradient(90deg,#dfe9ff 0%,#8fb2ff 22%,#ffffff 38%,#6f9cff 56%,#dbe6ff 78%,#9cc0ff 100%);
+      background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+      text-shadow:0 0 18px rgba(91,140,255,.18),0 0 34px rgba(91,140,255,.12);
+      filter:drop-shadow(0 2px 10px rgba(91,140,255,.16));animation:nitishGlowShift 6s ease-in-out infinite}
+    .nitish-signature::before{content:"";position:absolute;left:-8%;right:-8%;top:55%;height:58%;z-index:-2;
+      background:radial-gradient(ellipse at center, rgba(91,140,255,.24) 0%, rgba(91,140,255,.12) 38%, rgba(91,140,255,0) 72%);
+      transform:translateY(-50%);filter:blur(8px);opacity:.95;pointer-events:none}
+    .nitish-signature::after{content:"";position:absolute;top:0;bottom:0;left:-28%;width:26%;
+      background:linear-gradient(115deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.10) 35%, rgba(255,255,255,.9) 50%, rgba(255,255,255,.12) 64%, rgba(255,255,255,0) 100%);
+      transform:skewX(-18deg);filter:blur(.3px);animation:nitishShine 4.2s ease-in-out infinite;pointer-events:none}
+    @keyframes nitishGlowShift{0%,100%{background-position:0% 50%;text-shadow:0 0 18px rgba(91,140,255,.16),0 0 32px rgba(91,140,255,.10)}50%{background-position:100% 50%;text-shadow:0 0 22px rgba(91,140,255,.24),0 0 42px rgba(91,140,255,.16)}}
+    @keyframes nitishShine{0%,68%,100%{left:-30%;opacity:0}12%{opacity:.0}18%{opacity:.95}34%{left:108%;opacity:.25}35%{opacity:0}}
+
+
+    @media (max-width:980px){
+      .layout{grid-template-columns:1fr}
+      .help-grid{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (max-width:640px){
+      .shell{padding:14px}
+      .topbar{padding:14px}
+      .tabs{grid-template-columns:repeat(2,1fr)}
+      .split,.help-grid{grid-template-columns:1fr}
+      .btn-row{flex-direction:column}
+      .btn{width:100%}
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-icon">🧪</div>
+        <div>
+          <h1>Nitish QA Toolkit</h1>
+          <p>Credential launcher for Core, Ops, Flow, and Personal workbooks</p>
+        </div>
+      </div>
+      <div class="top-meta">
+        <div class="meta-pill"><strong>Mode:</strong> <span id="modeLabel">Core · Shared Credentials</span></div>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="Core">Core</button>
+      <button class="tab" data-tab="Ops">Ops</button>
+      <button class="tab" data-tab="Flow">Flow</button>
+      <button class="tab" data-tab="Personal">Personal</button>
+    </div>
+
+    <div class="layout">
+      <div class="card equal-card">
+        <div class="card-head">
+          <div class="card-title-wrap">
+            <div class="card-icon">📂</div>
+            <div>
+              <div class="card-title">Workbook Source</div>
+              <div class="card-sub">Load one shared workbook or your personal credentials file</div>
+            </div>
+          </div>
+          <div class="tag" id="activeSource">Shared workbook</div>
+        </div>
+        <div class="card-body">
+          <div id="sharedSection">
+            <p class="muted-copy">Use the shared workbook for <strong>Core</strong>, <strong>Ops</strong>, and <strong>Flow</strong>. Keep the sheet names exactly the same.</p>
+            <div class="upload-box">
+              <div class="upload-top">
+                <div class="label-xs">Shared workbook</div>
+                <div class="tag">Core / Ops / Flow</div>
+              </div>
+              <div class="file-chip"><span>📊</span><span id="sharedFileLabel">No shared workbook loaded</span></div>
+              <div class="btn-row">
+                <button class="btn primary" id="loadSharedBtn">⬆ Load Workbook</button>
+                <button class="btn warning" id="refreshBtn">↻ Refresh</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="personalSection" class="hidden">
+            <p class="muted-copy">Import your personal workbook. This stays in your browser only.</p>
+            <div class="upload-box">
+              <div class="upload-top">
+                <div class="label-xs">Personal file</div>
+                <div class="tag">Local Only</div>
+              </div>
+              <div class="file-chip"><span>🔒</span><span id="personalFileLabel">No personal profiles loaded</span></div>
+              <div class="btn-row">
+                <button class="btn primary block" id="loadPersonalBtn">⬆ Import Personal Credentials</button>
+              </div>
+            </div>
+          </div>
+
+          <input type="file" id="sharedFileInput" accept=".xlsx,.xls" class="hidden"/>
+          <input type="file" id="personalFileInput" accept=".xlsx,.xls" class="hidden"/>
+
+          <div class="status" id="statusAlert">
+            <span>ℹ</span>
+            <span id="statusText">Ready — load a workbook to begin.</span>
+          </div>
+
+          <div class="split">
+            <div class="mini">
+              <div class="k">Active Source</div>
+              <div class="v" id="activeSourceTile">Shared workbook</div>
+            </div>
+            <div class="mini">
+              <div class="k">Profiles Loaded</div>
+              <div class="v" id="profileCount">0 profiles</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card equal-card">
+        <div class="card-head">
+          <div class="card-title-wrap">
+            <div class="card-icon">🚀</div>
+            <div>
+              <div class="card-title">Access Workspace</div>
+              <div class="card-sub">Select a profile and launch instantly</div>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="field">
+            <label for="profileSelect">Login Profile</label>
+            <select class="select" id="profileSelect">
+              <option>No profiles loaded</option>
+            </select>
+          </div>
+
+          <div class="preview">
+            <div class="preview-item">
+              <div class="k">Username</div>
+              <div class="v" id="selectedUsername">—</div>
+            </div>
+            <div class="preview-item">
+              <div class="k">Target URL</div>
+              <div class="v" id="selectedUrl">—</div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="launch" id="launchBtn">🚀 Launch &amp; Copy Username</button>
+            <button class="btn secondary block" id="copyPassBtn">🔐 Copy Password</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="help">
+      <h3>Quick Use</h3>
+      <div class="help-grid">
+        <div class="help-item"><strong>Shared</strong><span>Load one workbook with Core, Ops, and Flow sheets.</span></div>
+        <div class="help-item"><strong>Personal</strong><span>Use the Personal tab for your own local workbook.</span></div>
+        <div class="help-item"><strong>Launch</strong><span>Open the URL and auto-copy the username to clipboard.</span></div>
+        <div class="help-item"><strong>Password</strong><span>Use the copy button to grab the password when needed.</span></div>
+      </div>
+    </div>
+
+    <div class="footer">Designed by <strong class="glow-name">Nitish Bisht</strong></div>
+  </div>
+
+<script>
+  const REQUIRED_COLUMNS=["Profile Name","Username","Password","URL"];
+  const SHARED_SHEETS=["Core","Ops","Flow"];
+  const PERSONAL_SHEET="Personal";
+  const PERSONAL_STORAGE_KEY="nitishQA_personalProfiles_v1";
+  const PERSONAL_FILENAME_KEY="nitishQA_personalFilename_v1";
+
+  let currentTab="Core";
+  let sharedData={Core:[],Ops:[],Flow:[]};
+  let personalData=[];
+  let personalFileName=localStorage.getItem(PERSONAL_FILENAME_KEY)||"";
+
+  const el={
+    tabs:document.querySelectorAll('.tab'),
+    modeLabel:document.getElementById('modeLabel'),
+    sharedSection:document.getElementById('sharedSection'),
+    personalSection:document.getElementById('personalSection'),
+    statusAlert:document.getElementById('statusAlert'),
+    statusText:document.getElementById('statusText'),
+    activeSource:document.getElementById('activeSource'),
+    activeSourceTile:document.getElementById('activeSourceTile'),
+    profileCount:document.getElementById('profileCount'),
+    profileSelect:document.getElementById('profileSelect'),
+    selectedUsername:document.getElementById('selectedUsername'),
+    selectedUrl:document.getElementById('selectedUrl'),
+    sharedFileLabel:document.getElementById('sharedFileLabel'),
+    personalFileLabel:document.getElementById('personalFileLabel'),
+    loadSharedBtn:document.getElementById('loadSharedBtn'),
+    loadPersonalBtn:document.getElementById('loadPersonalBtn'),
+    refreshBtn:document.getElementById('refreshBtn'),
+    sharedFileInput:document.getElementById('sharedFileInput'),
+    personalFileInput:document.getElementById('personalFileInput'),
+    launchBtn:document.getElementById('launchBtn'),
+    copyPassBtn:document.getElementById('copyPassBtn')
+  };
+
+  function setStatus(msg,tone='info'){
+    const styles={
+      success:['rgba(46,212,122,0.14)','rgba(46,212,122,0.22)','#c9f7de','✓'],
+      warning:['rgba(255,184,77,0.14)','rgba(255,184,77,0.22)','#ffe4b6','⚠'],
+      danger:['rgba(255,109,109,0.14)','rgba(255,109,109,0.22)','#ffd0d0','✕'],
+      info:['rgba(91,140,255,0.10)','rgba(255,255,255,0.08)','#d9e5ff','ℹ']
+    };
+    const [bg,border,color,icon]=styles[tone]||styles.info;
+    el.statusAlert.style.background=bg;
+    el.statusAlert.style.borderColor=border;
+    el.statusAlert.style.color=color;
+    el.statusAlert.innerHTML=`<span>${icon}</span><span>${msg}</span>`;
+  }
+
+  function updateModeUI(){
+    const isPersonal=currentTab==='Personal';
+    el.sharedSection.classList.toggle('hidden',isPersonal);
+    el.personalSection.classList.toggle('hidden',!isPersonal);
+    const modeText=isPersonal?'Personal · Local Browser Storage':`${currentTab} · Shared Credentials`;
+    const sourceText=isPersonal?'Personal local workbook':'Shared workbook';
+    el.modeLabel.textContent=modeText;
+    el.activeSource.textContent=sourceText;
+    el.activeSourceTile.textContent=sourceText;
+    updateProfileList();
+  }
+
+  function getCurrentProfiles(){
+    return currentTab==='Personal'?personalData:(sharedData[currentTab]||[]);
+  }
+
+  function updateSelectedPreview(){
+    const profiles=getCurrentProfiles();
+    const profile=profiles[Number(el.profileSelect.value)];
+    el.selectedUsername.textContent=profile?(profile.username||'—'):'—';
+    el.selectedUrl.textContent=profile?(profile.url||'—'):'—';
+  }
+
+  function updateProfileList(){
+    const profiles=getCurrentProfiles();
+    el.profileSelect.innerHTML='';
+    if(!profiles.length){
+      const opt=document.createElement('option');
+      opt.textContent=currentTab==='Personal'?'No personal profiles loaded':'No profiles loaded';
+      opt.value='';
+      el.profileSelect.appendChild(opt);
+      el.profileCount.textContent='0 profiles';
+      updateSelectedPreview();
+      return;
+    }
+    profiles.forEach((p,i)=>{
+      const opt=document.createElement('option');
+      opt.value=i;
+      opt.textContent=p.name||`Profile ${i+1}`;
+      el.profileSelect.appendChild(opt);
+    });
+    el.profileCount.textContent=`${profiles.length} profile${profiles.length>1?'s':''}`;
+    el.profileSelect.selectedIndex=0;
+    updateSelectedPreview();
+  }
+
+  function normalizeHeaders(row){return row.map(c=>String(c??'').trim());}
+
+  function sheetToProfiles(wb,sheetName){
+    const sheet=wb.Sheets[sheetName];
+    if(!sheet)return{ok:false,error:`Sheet "${sheetName}" not found.`};
+    const rows=XLSX.utils.sheet_to_json(sheet,{header:1,defval:''});
+    if(!rows.length)return{ok:false,error:`Sheet "${sheetName}" is empty.`};
+    const headers=normalizeHeaders(rows[0]);
+    const missing=REQUIRED_COLUMNS.filter(c=>!headers.includes(c));
+    if(missing.length)return{ok:false,error:`Sheet "${sheetName}" missing columns: ${missing.join(', ')}.`};
+    const ci={}; headers.forEach((h,i)=>ci[h]=i);
+    const profiles=rows.slice(1).map(row=>({
+      name:String(row[ci['Profile Name']]??'').trim(),
+      username:String(row[ci['Username']]??'').trim(),
+      password:String(row[ci['Password']]??'').trim(),
+      url:String(row[ci['URL']]??'').trim()
+    })).filter(p=>p.name||p.username||p.password||p.url);
+    return {ok:true,profiles};
+  }
+
+  function parseWorkbook(file,onSuccess,type){
+    if(typeof XLSX==='undefined'){setStatus('Excel library failed to load. Stay online and reload.','danger');return;}
+    const reader=new FileReader();
+    reader.onload=e=>{
+      try{onSuccess(XLSX.read(e.target.result,{type:'array'}));}
+      catch(err){console.error(err);setStatus(`Cannot read ${type} workbook. Check the file format.`,'danger');}
+    };
+    reader.onerror=()=>setStatus(`Cannot open ${type} workbook.`,'danger');
+    reader.readAsArrayBuffer(file);
+  }
+
+  function loadSharedWorkbook(file){
+    if(!file)return;
+    parseWorkbook(file,wb=>{
+      const next={Core:[],Ops:[],Flow:[]};
+      for(const name of SHARED_SHEETS){
+        const res=sheetToProfiles(wb,name);
+        if(!res.ok){setStatus(res.error,'danger');return;}
+        next[name]=res.profiles;
+      }
+      sharedData=next;
+      el.sharedFileLabel.textContent=file.name;
+      updateProfileList();
+      setStatus('Shared workbook loaded successfully.','success');
+    },'shared');
+  }
+
+  function loadPersonalWorkbook(file){
+    if(!file)return;
+    parseWorkbook(file,wb=>{
+      const res=sheetToProfiles(wb,PERSONAL_SHEET);
+      if(!res.ok){setStatus(res.error,'danger');return;}
+      personalData=res.profiles;
+      personalFileName=file.name;
+      localStorage.setItem(PERSONAL_STORAGE_KEY,JSON.stringify(personalData));
+      localStorage.setItem(PERSONAL_FILENAME_KEY,personalFileName);
+      el.personalFileLabel.textContent=personalFileName||'Personal credentials imported';
+      if(currentTab==='Personal')updateProfileList();
+      setStatus('Personal credentials imported successfully.','success');
+    },'personal');
+  }
+
+  function restorePersonalFromStorage(){
+    try{
+      const raw=localStorage.getItem(PERSONAL_STORAGE_KEY);
+      if(raw){const parsed=JSON.parse(raw); if(Array.isArray(parsed)) personalData=parsed;}
+    }catch(e){console.error(e);}
+    el.personalFileLabel.textContent=personalData.length ? (personalFileName||'Personal credentials loaded from browser') : 'No personal profiles loaded';
+  }
+
+  async function copyText(value,successMsg){
+    if(!value){setStatus('No value to copy for selected profile.','warning');return;}
+    try{
+      await navigator.clipboard.writeText(value);
+      setStatus(successMsg,'success');
+    }catch(e){
+      console.error(e);
+      setStatus('Clipboard blocked. Allow clipboard access and retry.','danger');
+    }
+  }
+
+  function buildFreshLoginUrl(rawUrl){
+    return rawUrl;
+  }
+
+  async function launchPortal(){
+    const profiles=getCurrentProfiles();
+    const profile=profiles[Number(el.profileSelect.value)];
+    if(!profile){setStatus('Load credentials and select a profile first.','warning');return;}
+    if(!profile.url){setStatus('Selected profile has no URL.','warning');return;}
+    const freshUrl=buildFreshLoginUrl(profile.url);
+    window.open(freshUrl,'_blank','noopener');
+    await copyText(profile.username,'Fresh login page opened — username copied to clipboard.');
+  }
+
+  function switchTab(name){
+    currentTab=name;
+    el.tabs.forEach(t=>t.classList.toggle('active',t.dataset.tab===name));
+    updateModeUI();
+  }
+
+  el.tabs.forEach(t=>t.addEventListener('click',()=>switchTab(t.dataset.tab)));
+  el.profileSelect.addEventListener('change',updateSelectedPreview);
+  el.loadSharedBtn.addEventListener('click',()=>el.sharedFileInput.click());
+  el.loadPersonalBtn.addEventListener('click',()=>el.personalFileInput.click());
+  el.refreshBtn.addEventListener('click',()=>el.sharedFileInput.click());
+  el.sharedFileInput.addEventListener('change',e=>{loadSharedWorkbook(e.target.files[0]);e.target.value='';});
+  el.personalFileInput.addEventListener('change',e=>{loadPersonalWorkbook(e.target.files[0]);e.target.value='';});
+  el.launchBtn.addEventListener('click',launchPortal);
+  el.copyPassBtn.addEventListener('click',()=>{
+    const profile=getCurrentProfiles()[Number(el.profileSelect.value)];
+    if(!profile){setStatus('Select a valid profile first.','warning');return;}
+    copyText(profile.password,'Password copied successfully.');
+  });
+
+  restorePersonalFromStorage();
+  updateModeUI();
+  setStatus('Ready — load a workbook to begin.','info');
+
+
+
+</script>
+</body>
+</html>
